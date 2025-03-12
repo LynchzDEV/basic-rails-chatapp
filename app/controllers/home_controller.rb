@@ -8,4 +8,17 @@ class HomeController < ApplicationController
       @message = @current_room.messages.build
     end
   end
+
+  def cable_test
+    if params[:room_id]
+      @room = Room.find(params[:room_id])
+      ActionCable.server.broadcast(
+        "#{@room.id}_messages",
+        { html: "<div>Test message at #{Time.now.strftime('%H:%M:%S')}</div>" }
+      )
+      render plain: "Test broadcast sent to room #{@room.id}"
+    else
+      render plain: "Please provide a room_id parameter"
+    end
+  end
 end

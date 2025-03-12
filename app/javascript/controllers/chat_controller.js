@@ -5,9 +5,32 @@ export default class extends Controller {
   static targets = ["messages", "input"];
 
   connect() {
-    console.log("Chat controller connected");
+    console.log("Chat controller connected", this.messagesTarget);
+    console.log("Messages container ID:", this.messagesTarget.id);
     this.scrollToBottom();
     this.setupTurboStreamEvents();
+  }
+
+  setupTurboStreamEvents() {
+    console.log("Setting up Turbo Stream events");
+
+    document.addEventListener("turbo:before-stream-render", (event) => {
+      console.log("Turbo stream before render:", event.target);
+    });
+
+    document.addEventListener("turbo:stream-render", (event) => {
+      console.log("Turbo stream rendered:", event.target);
+      this.scrollToBottom();
+    });
+
+    // Listen for ActionCable connections/disconnections
+    document.addEventListener("turbo:connected", () => {
+      console.log("Turbo connected to server");
+    });
+
+    document.addEventListener("turbo:disconnected", () => {
+      console.log("Turbo disconnected from server");
+    });
   }
 
   scrollToBottom() {
@@ -18,22 +41,8 @@ export default class extends Controller {
     }
   }
 
-  setupTurboStreamEvents() {
-    document.addEventListener("turbo:before-stream-render", (event) => {
-      // Debug info to console
-      console.log("Turbo stream event:", event.target);
-
-      // Wait for the DOM update to complete before scrolling
-      if (event.target && event.target.action === "append") {
-        setTimeout(() => this.scrollToBottom(), 50);
-      }
-    });
-  }
-
   resetForm(event) {
     event.target.reset();
     this.inputTarget.focus();
-    // Add a delay before scrolling again to ensure DOM is updated
-    setTimeout(() => this.scrollToBottom(), 50);
   }
 }

@@ -380,6 +380,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  actioncable
   bootsnap
   brakeman
   capybara
