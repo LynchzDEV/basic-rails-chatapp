@@ -1,5 +1,7 @@
 <% content_for :title, @current_room ? @current_room.name : "Chat Rooms" %>
 
+<%= turbo_stream_from "rooms" %>
+
 <div class="chat-container">
   <!-- Sidebar with rooms list -->
   <div class="rooms-sidebar">
@@ -11,7 +13,7 @@
       <% end %>
     </div>
 
-    <div class="rooms-list-sidebar">
+    <div class="rooms-list-sidebar" id="rooms">
       <% if @rooms.empty? %>
         <div class="empty-state-mini">
           <p>No rooms available</p>
@@ -19,13 +21,15 @@
         </div>
       <% else %>
         <% @rooms.each do |room| %>
-          <%= link_to root_path(room_id: room.id),
+          <%= turbo_frame_tag dom_id(room) do %>
+            <%= link_to root_path(room_id: room.id),
                       class: "room-item #{'active' if @current_room && @current_room.id == room.id}",
                       data: { turbo_frame: "_top" } do %>
-            <div class="room-title"><%= room.name %></div>
-            <div class="room-meta">
-              <span class="message-count"><%= room.messages.count %></span>
-            </div>
+              <div class="room-title"><%= room.name %></div>
+              <div class="room-meta">
+                <span class="message-count"><%= room.messages.count %></span>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
@@ -50,36 +54,19 @@
 
       <div class="messages-container" id="<%= dom_id(@current_room, 'messages') %>">
         <%= turbo_stream_from @current_room %>
-        <% if @messages.any? %>
-          <div class="message-list">
+        <div class="message-list" id="room_<%= @current_room&.id %>_messages_list">
+          <% if @messages && @messages.any? %>
             <% @messages.each do |message| %>
-              <div id="<%= dom_id(message) %>" class="message-bubble <%= message.user == current_user ? 'sent' : 'received' %>">
-                <div class="message-user">
-                  <strong><%= message.user.email.split('@').first %></strong>
-                </div>
-                <% if message.user == current_user %>
-                  <div class="message-content" style="color: white"><%= message.content %></div>
-                  <div class="message-meta">
-                    <span style="color: rgba(255, 255, 255, 0.8);"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
-                    <%= link_to "Edit", edit_message_path(message), class: "message-action", style: "color: white;" %>
-                    <%= link_to "Delete", message_path(message), data: { turbo_method: :delete, turbo_confirm: "Delete this message?" }, class: "message-action", style: "color: red;" %>
-                  </div>
-                <% else %>
-                    <div class="message-meta" style="display: flex; flex-direction: column;">
-                    <div class="message-content" style=" align-self: flex-start"><%= message.content %></div>
-                    <div style="margin-top: 8px; align-self: flex-end"><%= message.created_at.strftime("%b %d, %I:%M %p") %></div>
-                  </div>
-                <% end %>
-              </div>
+              <%= render partial: "messages/message", locals: { message: message, is_current_user: message.user == current_user } %>
             <% end %>
-          </div>
-        <% else %>
-          <div class="empty-messages">
-            <div class="empty-state-icon">💬</div>
-            <h3>No Messages Yet</h3>
-            <p>Start the conversation!</p>
-          </div>
-        <% end %>
+          <% else %>
+            <div class="empty-messages">
+              <div class="empty-state-icon">💬</div>
+              <h3>No Messages Yet</h3>
+              <p>Start the conversation!</p>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <div class="chat-input">

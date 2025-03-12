@@ -1,11 +1,10 @@
-<div id="<%= dom_id room %>">
-  <p>
-    <strong>Name:</strong>
-    <%= room.name %>
-  </p>
-
-  <p>
-    <strong>Description:</strong>
-    <%= room.description %>
-  </p>
-</div>
+<%= turbo_frame_tag dom_id(room) do %>
+  <%= link_to root_path(room_id: room.id),
+            class: "room-item",
+            data: { turbo_frame: "_top" } do %>
+    <div class="room-title"><%= room.name %></div>
+    <div class="room-meta">
+      <span class="message-count"><%= room.messages.count %></span>
+    </div>
+  <% end %>
+<% end %>

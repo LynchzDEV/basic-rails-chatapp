@@ -1,0 +1,11 @@
+<div id="<%= dom_id(message) %>" class="message-bubble sent">
+  <div class="message-user">
+    <strong><%= message.user.email.split('@').first %></strong>
+  </div>
+  <div class="message-content" style="color: white"><%= message.content %></div>
+  <div class="message-meta">
+    <span style="color: rgba(255, 255, 255, 0.8);"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
+    <%= link_to "Edit", edit_message_path(message), class: "message-action", style: "color: white;" %>
+    <%= link_to "Delete", message_path(message), data: { turbo_method: :delete, turbo_confirm: "Delete this message?" }, class: "message-action", style: "color: red;" %>
+  </div>
+</div>

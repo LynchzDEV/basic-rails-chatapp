@@ -1,11 +1,18 @@
-<div id="<%= dom_id message %>">
-  <div class="message-info">
-    <div class="message-sender">
-      <strong><%= message.user.email %></strong>
-      <span class="message-timestamp"><%= message.created_at.strftime("%b %d, %Y at %I:%M %p") %></span>
-    </div>
-    <div class="message-content">
-      <%= message.content %>
-    </div>
+<div id="<%= dom_id(message) %>" class="message-bubble <%= is_current_user ? 'sent' : 'received' %>">
+  <div class="message-user">
+    <strong><%= message.user.email.split('@').first %></strong>
   </div>
+  <% if is_current_user %>
+    <div class="message-content" style="color: white"><%= message.content %></div>
+    <div class="message-meta">
+      <span style="color: rgba(255, 255, 255, 0.8);"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
+      <%= link_to "Edit", edit_message_path(message), class: "message-action", style: "color: white;" %>
+      <%= link_to "Delete", message_path(message), data: { turbo_method: :delete, turbo_confirm: "Delete this message?" }, class: "message-action", style: "color: red;" %>
+    </div>
+  <% else %>
+    <div class="message-content"><%= message.content %></div>
+    <div class="message-meta">
+      <%= message.created_at.strftime("%b %d, %I:%M %p") %>
+    </div>
+  <% end %>
 </div>

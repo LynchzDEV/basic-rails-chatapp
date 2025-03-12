@@ -1,0 +1,9 @@
+<div id="<%= dom_id(message) %>" class="message-bubble">
+  <div class="message-user">
+    <strong><%= message.user.email.split('@').first %></strong>
+  </div>
+  <div class="message-content"><%= message.content %></div>
+  <div class="message-meta">
+    <%= message.created_at.strftime("%b %d, %I:%M %p") %>
+  </div>
+</div>

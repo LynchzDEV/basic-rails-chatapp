@@ -124,6 +124,19 @@
           });
         }
       });
+
+      ocument.addEventListener('turbo:load', function() {
+          const scrollToBottom = () => {
+            const container = document.querySelector('.messages-container');
+            if (container) {
+              container.scrollTop = container.scrollHeight;
+            }
+          };
+
+          scrollToBottom();
+
+          document.addEventListener('turbo:frame-render', scrollToBottom);
+        });
     </script>
     <style>
       .user-greeting {
