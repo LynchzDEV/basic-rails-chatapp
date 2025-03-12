@@ -1,12 +1,10 @@
-// app/javascript/controllers/chat_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["messages", "input"];
 
   connect() {
-    console.log("Chat controller connected", this.messagesTarget);
-    console.log("Messages container ID:", this.messagesTarget.id);
+    console.log("Chat controller connected");
     this.scrollToBottom();
     this.setupTurboStreamEvents();
   }
@@ -15,15 +13,26 @@ export default class extends Controller {
     console.log("Setting up Turbo Stream events");
 
     document.addEventListener("turbo:before-stream-render", (event) => {
-      console.log("Turbo stream before render:", event.target);
+      if (
+        event.target &&
+        event.target.target &&
+        event.target.target.includes("_messages")
+      ) {
+        console.log("Message stream about to render");
+      }
     });
 
     document.addEventListener("turbo:stream-render", (event) => {
-      console.log("Turbo stream rendered:", event.target);
-      this.scrollToBottom();
+      if (
+        event.target &&
+        event.target.target &&
+        event.target.target.includes("_messages")
+      ) {
+        console.log("Message stream rendered, scrolling to bottom");
+        this.scrollToBottom();
+      }
     });
 
-    // Listen for ActionCable connections/disconnections
     document.addEventListener("turbo:connected", () => {
       console.log("Turbo connected to server");
     });

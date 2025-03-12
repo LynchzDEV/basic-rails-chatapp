@@ -33,6 +33,8 @@ class MessagesController < ApplicationController
 
     respond_to do |format|
       if @message.save
+        @message.broadcast_append_to @message.room, partial: @message, locals: { message: @message, user_id: @message.user_id }, target: "messages-list"
+
         format.turbo_stream
         format.html { redirect_to root_path(room_id: @room.id) }
       else
