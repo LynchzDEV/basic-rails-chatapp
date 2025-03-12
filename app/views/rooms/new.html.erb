@@ -1,0 +1,11 @@
+<% content_for :title, "New room" %>
+
+<div class="container">
+  <h1>New room</h1>
+
+  <%= render "form", room: @room %>
+
+  <div class="nav-links">
+    <%= link_to "Back to rooms", rooms_path, class: "button secondary" %>
+  </div>
+</div>

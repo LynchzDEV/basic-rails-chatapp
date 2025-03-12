@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Chatapp" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/chart.js", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+      <header class="navbar">
+        <div class="navbar-container">
+          <div class="navbar-logo">
+            <%= link_to root_path do %>
+              <span class="logo-text">Chatapp</span>
+            <% end %>
+          </div>
+
+          <nav class="navbar-menu">
+            <ul class="navbar-links">
+              <!-- <li><%= link_to "Rooms", rooms_path, class: current_page?(rooms_path) ? 'active' : '' %></li>
+              <li><%= link_to "Messages", messages_path, class: current_page?(messages_path) ? 'active' : '' %></li> -->
+              <li><%= link_to "Summary", summary_rooms_path, class: current_page?(summary_rooms_path) ? 'active' : '' %></li>
+              <!-- <% if user_signed_in? %>
+                <li><%= link_to "My Account", edit_user_registration_path, class: current_page?(edit_user_registration_path) ? 'active' : '' %></li>
+              <% end %> -->
+            </ul>
+            <div class="navbar-actions">
+              <% if user_signed_in? %>
+                <%= link_to edit_user_registration_path, class: "user-greeting" do %>
+                  Hello, <%= current_user.email.split('@').first %>
+                <% end %>
+              <% else %>
+                <%= link_to "Sign In", new_user_session_path, class: "button" %>
+                <%= link_to "Sign Up", new_user_registration_path, class: "button secondary" %>
+              <% end %>
+            </div>
+          </nav>
+
+          <button class="navbar-toggle" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+    <div class="main-content">
+      <%= yield %>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; <%= Date.today.year %> Chatapp. All rights reserved.</p>
+      </div>
+    </footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const navbarToggle = document.querySelector('.navbar-toggle');
+        const navbarMenu = document.querySelector('.navbar-menu');
+
+        function toggleMenu() {
+          navbarMenu.classList.toggle('active');
+          navbarToggle.classList.toggle('active');
+        }
+
+        navbarToggle.addEventListener('click', toggleMenu);
+
+        document.querySelectorAll('.navbar-links a, .navbar-actions a').forEach(link => {
+          link.addEventListener('click', function() {
+            if (navbarMenu.classList.contains('active')) {
+              toggleMenu();
+            }
+          });
+        });
+
+        document.addEventListener('click', function(event) {
+          const isClickInsideNavbar = navbarToggle.contains(event.target) ||
+                                     navbarMenu.contains(event.target);
+
+          if (!isClickInsideNavbar && navbarMenu.classList.contains('active')) {
+            toggleMenu();
+          }
+        });
+
+        navbarMenu.addEventListener('click', function(event) {
+          event.stopPropagation();
+        });
+
+        const userDropdownToggle = document.querySelector('.user-dropdown-toggle');
+
+        if (userDropdownToggle) {
+          userDropdownToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const dropdown = this.nextElementSibling;
+            dropdown.classList.toggle('show');
+
+            const closeDropdown = function(event) {
+              if (!dropdown.contains(event.target) && event.target !== userDropdownToggle) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeDropdown);
+              }
+            };
+
+            if (dropdown.classList.contains('show')) {
+              setTimeout(() => {
+                document.addEventListener('click', closeDropdown);
+              }, 0);
+            }
+          });
+        }
+      });
+    </script>
+    <style>
+      .user-greeting {
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-primary);
+        font-weight: 500;
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 20px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .user-greeting:hover {
+        background-color: var(--dark-background);
+        color: var(--primary-color);
+      }
+
+      /* Adjust navbar spacing */
+      .navbar-links {
+        gap: 24px;
+      }
+
+      /* Adjust navbar on mobile */
+      @media (max-width: 768px) {
+        .navbar-links li a, .user-greeting {
+          font-size: 18px;
+          padding: 10px 0;
+        }
+      }
+    </style>
+  </body>
+</html>

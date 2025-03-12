@@ -1,0 +1,11 @@
+<% content_for :title, "New message" %>
+
+<div class="container">
+  <h1>New message</h1>
+
+  <%= render "form", message: @message %>
+
+  <div class="nav-links">
+    <%= link_to "Back to messages", room_messages_path(@room), class: "button secondary" %>
+  </div>
+</div>

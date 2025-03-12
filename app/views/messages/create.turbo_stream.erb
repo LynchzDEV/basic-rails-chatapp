@@ -1,0 +1,17 @@
+<%= turbo_stream.append dom_id(@message.room, 'messages') do %>
+  <%= turbo_frame_tag dom_id(@message) do %>
+    <div class="message-bubble sent">
+      <div class="message-user">
+        <strong><%= @message.user.email.split('@').first %></strong>
+      </div>
+      <div class="message-content"><%= @message.content %></div>
+      <div class="message-meta">
+        <%= @message.created_at.strftime("%b %d, %I:%M %p") %>
+        <%= link_to "Edit", edit_message_path(@message), class: "message-action" %>
+        <%= button_to "Delete", message_path(@message),
+                form: { data: { turbo_confirm: "Delete this message?" } },
+                method: :delete, class: "message-action text-danger" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,55 @@
+<% content_for :title, @room ? "Messages in #{@room.name}" : "All Messages" %>
+
+<div class="container">
+  <% if notice %>
+    <div class="notification success"><%= notice %></div>
+  <% end %>
+
+  <div class="header">
+    <h1><%= @room ? "Messages in #{@room.name}" : "All Messages" %></h1>
+    <div class="header-actions">
+      <% if @room %>
+        <%= link_to "New message", new_room_message_path(@room), class: "button" %>
+        <%= link_to "Back to room", room_path(@room), class: "button secondary" %>
+      <% else %>
+        <%= link_to "Back to rooms", rooms_path, class: "button secondary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @messages.empty? %>
+    <div class="empty-state">
+      <div class="empty-state-icon">💬</div>
+      <h3>No Messages</h3>
+      <p><%= @room ? "Start a conversation in this room!" : "No messages found in any room." %></p>
+      <% if @room %>
+        <%= link_to "Send first message", new_room_message_path(@room), class: "button" %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="messages-list">
+    <% @messages.each do |message| %>
+        <div class="message-card">
+        <div class="message-header">
+            <div class="message-user-info">
+            <% if !@room %>
+                <span class="room-tag"><%= link_to message.room.name, room_path(message.room) %></span>
+            <% end %>
+            <span class="user-tag"><%= message.user.email.split('@').first %></span>
+            </div>
+            <span class="message-time"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
+        </div>
+        <div class="message-body">
+            <%= message.content %>
+        </div>
+        <div class="message-footer">
+            <%= link_to "View", message_path(message), class: "message-link" %>
+            <% if message.user == current_user %>
+            <%= link_to "Edit", edit_message_path(message), class: "message-link" %>
+            <% end %>
+        </div>
+        </div>
+    <% end %>
+    </div>
+  <% end %>
+</div>

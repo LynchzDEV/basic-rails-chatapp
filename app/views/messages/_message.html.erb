@@ -1,0 +1,11 @@
+<div id="<%= dom_id message %>">
+  <div class="message-info">
+    <div class="message-sender">
+      <strong><%= message.user.email %></strong>
+      <span class="message-timestamp"><%= message.created_at.strftime("%b %d, %Y at %I:%M %p") %></span>
+    </div>
+    <div class="message-content">
+      <%= message.content %>
+    </div>
+  </div>
+</div>

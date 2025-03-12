@@ -1,0 +1,57 @@
+<% content_for :title, "Edit Profile" %>
+
+<div class="container">
+  <div class="header">
+    <h1>Edit Profile</h1>
+  </div>
+
+  <div class="card">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "profile-form" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-field">
+        <%= f.label :email %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <div class="alert alert-info">
+          Currently waiting confirmation for: <%= resource.unconfirmed_email %>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= f.label :password %> <span class="field-hint">(leave blank if you don't want to change it)</span>
+        <%= f.password_field :password, autocomplete: "new-password" %>
+        <% if @minimum_password_length %>
+          <span class="field-requirements"><%= @minimum_password_length %> characters minimum</span>
+        <% end %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :password_confirmation %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :current_password %> <span class="field-hint">(we need your current password to confirm your changes)</span>
+        <%= f.password_field :current_password, autocomplete: "current-password" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Update", class: "button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="card danger-zone">
+    <h3>Cancel my account</h3>
+    <p>If you delete your account, all your messages and personal information will be permanently removed.</p>
+    <%= button_to "Delete my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "button danger" %>
+  </div>
+
+  <div class="nav-links">
+    <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "button danger" %>
+    <%= link_to "Back", :back, class: "button secondary" %>
+  </div>
+</div>

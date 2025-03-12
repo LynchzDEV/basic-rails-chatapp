@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+options = {
+  host: 'localhost',
+  port: 3000,
+  environment: ENV['RAILS_ENV'] || 'development'
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/chatapp [options]"
+
+  opts.on("--host HOST", "Specify the host to bind to (default: localhost)") do |host|
+    options[:host] = host
+  end
+
+  opts.on("--port PORT", "Specify the port to listen on (default: 3000)") do |port|
+    options[:port] = port.to_i
+  end
+
+  opts.on("--environment ENV", "Specify the Rails environment (default: development)") do |env|
+    options[:environment] = env
+  end
+
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+# Set environment
+ENV['RAILS_ENV'] = options[:environment]
+
+# Start the server with the specified options
+exec("bin/rails server -b #{options[:host]} -p #{options[:port]}")
