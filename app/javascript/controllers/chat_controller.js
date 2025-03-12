@@ -4,21 +4,28 @@ export default class extends Controller {
   static targets = ["messages", "input"];
 
   connect() {
+    console.log("Chat controller connected");
     this.scrollToBottom();
-    this.focusInput();
+    this.setupTurboStreamEvents();
   }
 
   scrollToBottom() {
-    const messages = this.messagesTarget;
-    messages.scrollTop = messages.scrollHeight;
+    const messagesContainer = this.messagesTarget;
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
   }
 
-  focusInput() {
+  setupTurboStreamEvents() {
+    document.addEventListener("turbo:before-stream-render", (event) => {
+      if (event.target && event.target.action === "append") {
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  resetForm(event) {
+    event.target.reset();
     this.inputTarget.focus();
-  }
-
-  reset() {
-    this.element.reset();
-    this.focusInput();
   }
 }

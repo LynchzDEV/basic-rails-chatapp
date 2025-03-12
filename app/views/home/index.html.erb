@@ -37,7 +37,7 @@
   </div>
 
   <!-- Main content area -->
-  <div class="chat-main">
+  <div class="chat-main" data-controller="chat">
     <% if @current_room %>
       <div class="chat-header">
         <h1><%= @current_room.name %></h1>
@@ -52,12 +52,12 @@
         <p><%= @current_room.description %></p>
       </div>
 
-      <div class="messages-container" id="<%= dom_id(@current_room, 'messages') %>">
-        <%= turbo_stream_from @current_room %>
-        <div class="message-list" id="room_<%= @current_room&.id %>_messages_list">
+      <div class="messages-container" data-chat-target="messages">
+        <%= turbo_stream_from @current_room if @current_room %>
+        <div class="message-list" id="messages">
           <% if @messages && @messages.any? %>
             <% @messages.each do |message| %>
-              <%= render partial: "messages/message", locals: { message: message, is_current_user: message.user == current_user } %>
+              <%= render "messages/message", message: message, user_id: current_user.id %>
             <% end %>
           <% else %>
             <div class="empty-messages">
@@ -71,10 +71,12 @@
 
       <div class="chat-input">
         <%= form_with(model: [@current_room, @message],
-                      url: room_messages_path(@current_room),
-                      data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" }) do |form| %>
+                    url: room_messages_path(@current_room),
+                    data: { action: "turbo:submit-end->chat#resetForm" }) do |form| %>
           <div class="message-input-container">
-            <%= form.text_field :content, placeholder: "Type your message here...", class: "message-input", autofocus: true %>
+            <%= form.text_field :content, placeholder: "Type your message here...",
+                               class: "message-input", autofocus: true,
+                               data: { chat_target: "input" } %>
             <%= form.submit "Send", class: "message-submit" %>
           </div>
         <% end %>

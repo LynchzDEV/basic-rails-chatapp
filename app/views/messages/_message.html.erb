@@ -1,18 +1,23 @@
-<div id="<%= dom_id(message) %>" class="message-bubble <%= is_current_user ? 'sent' : 'received' %>">
+<!-- app/views/messages/_message.html.erb -->
+<div id="<%= dom_id(message) %>"
+     class="message-bubble <%= message.user_id == user_id ? 'sent' : 'received' %>"
+     data-message-id="<%= message.id %>"
+     data-user-id="<%= message.user_id %>">
   <div class="message-user">
     <strong><%= message.user.email.split('@').first %></strong>
   </div>
-  <% if is_current_user %>
-    <div class="message-content" style="color: white"><%= message.content %></div>
-    <div class="message-meta">
-      <span style="color: rgba(255, 255, 255, 0.8);"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
-      <%= link_to "Edit", edit_message_path(message), class: "message-action", style: "color: white;" %>
-      <%= link_to "Delete", message_path(message), data: { turbo_method: :delete, turbo_confirm: "Delete this message?" }, class: "message-action", style: "color: red;" %>
-    </div>
-  <% else %>
-    <div class="message-content"><%= message.content %></div>
-    <div class="message-meta">
+  <div class="message-content" style="<%= message.user_id == user_id ? 'color: white;' : '' %>">
+    <%= message.content %>
+  </div>
+  <div class="message-meta">
+    <span style="<%= message.user_id == user_id ? 'color: rgba(255, 255, 255, 0.8);' : '' %>">
       <%= message.created_at.strftime("%b %d, %I:%M %p") %>
-    </div>
-  <% end %>
+    </span>
+    <% if message.user_id == user_id %>
+      <%= link_to "Edit", edit_message_path(message), class: "message-action", style: "color: white;" %>
+      <%= link_to "Delete", message_path(message),
+                 data: { turbo_method: :delete, turbo_confirm: "Delete this message?" },
+                 class: "message-action", style: "color: red;" %>
+    <% end %>
+  </div>
 </div>
