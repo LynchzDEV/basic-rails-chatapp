@@ -1,3 +1,4 @@
+// app/javascript/controllers/chat_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
@@ -13,13 +14,18 @@ export default class extends Controller {
     const messagesContainer = this.messagesTarget;
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      console.log("Scrolled to bottom");
     }
   }
 
   setupTurboStreamEvents() {
     document.addEventListener("turbo:before-stream-render", (event) => {
+      // Debug info to console
+      console.log("Turbo stream event:", event.target);
+
+      // Wait for the DOM update to complete before scrolling
       if (event.target && event.target.action === "append") {
-        this.scrollToBottom();
+        setTimeout(() => this.scrollToBottom(), 50);
       }
     });
   }
@@ -27,5 +33,7 @@ export default class extends Controller {
   resetForm(event) {
     event.target.reset();
     this.inputTarget.focus();
+    // Add a delay before scrolling again to ensure DOM is updated
+    setTimeout(() => this.scrollToBottom(), 50);
   }
 }

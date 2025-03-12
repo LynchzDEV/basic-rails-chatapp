@@ -4,5 +4,7 @@ class Message < ApplicationRecord
 
   validates :content, presence: true
 
-  broadcasts_to :room
+  after_create_commit -> { broadcast_append_to [room, "messages"] }
+  after_update_commit -> { broadcast_replace_to [room, "messages"] }
+  after_destroy_commit -> { broadcast_remove_to [room, "messages"] }
 end

@@ -53,8 +53,8 @@
       </div>
 
       <div class="messages-container" data-chat-target="messages">
-        <%= turbo_stream_from @current_room if @current_room %>
-        <div class="message-list" id="messages">
+        <%= turbo_stream_from [@current_room, "messages"] if @current_room %>
+        <div class="message-list" id="<%= dom_id(@current_room, 'messages') if @current_room %>">
           <% if @messages && @messages.any? %>
             <% @messages.each do |message| %>
               <%= render "messages/message", message: message, user_id: current_user.id %>
